@@ -21,25 +21,25 @@ $(function() {
             expect(allFeeds.length).not.toBe(0);
         });
 
+        function samedetection(key){
+            for(var i = 0; i < allFeeds.length; i++){
+                expect(allFeeds[i][key]).toBeDefined();
+                expect(allFeeds[i][key]).not.toBe("");
+            }
+        }
 
         /* TODO:
          * 编写一个测试遍历 allFeeds 对象里面的所有的源来保证有链接字段而且链接不是空的。
          */
         it('allFeeds url defined and not empty', function(){
-            for(var i = 0; i < allFeeds.length; i++){
-                expect(allFeeds[i].url).toBeDefined();
-                expect(allFeeds[i].url).not.toBe("");
-            }
+            samedetection('url');
         });
 
         /* TODO:
          * 编写一个测试遍历 allFeeds 对象里面的所有的源来保证有名字字段而且不是空的。
          */
         it('allFeeds name defined and not empty', function(){
-            for(var i = 0; i < allFeeds.length; i++){
-                expect(allFeeds[i].name).toBeDefined();
-                expect(allFeeds[i].name).not.toBe("");
-            }
+            samedetection('name');
         });
     });
 
@@ -89,9 +89,7 @@ $(function() {
          * 和异步的 done() 函数。
          */
         beforeEach(function(done){
-            loadFeed(0, function(){
-                done()
-            });
+            loadFeed(0, done);
         });
         it('load completion function loadFeed()', function(done){
             expect($('.feed').find('.entry').length).not.toBe(0);
@@ -106,20 +104,27 @@ $(function() {
          * 记住，loadFeed() 函数是异步的。
          */
     describe('New feed Selection', function() {
-        var html;
+        var text1,
+            text2;
         beforeEach(function(done){
-            html = $('.feed').find('.entry').eq(0).html();
+            /*html = $('.feed').find('.entry').eq(0).html();
             // 此处循环为防止单一请求超时报错而无法正确测试
             for(var i = 1; i < allFeeds.length; i++ ) {
                 // id非0循环调用函数请求数据
-                loadFeed(i, function(){
+                loadFeed(i, done);
+            }*/
+            loadFeed(1, function(){
+                text1 = $('.feed').text();
+                loadFeed(0, function(){
+                    text2 = $('.feed').text();
                     done();
                 });
-            }
+            })
         });
-        it('change', function(done){
-            expect(html).not.toBe($('.feed').find('.entry').eq(0).html);
-            done();
+        it('change', function(){
+            // expect(html).not.toBe($('.feed').find('.entry').eq(0).html);
+            // done();
+            expect(text1).not.toEqual(text2);
         })
     });
 }());
